@@ -17,23 +17,21 @@ form.addEventListener('submit',async e=>{
 // scroll progress
 const pb=document.createElement('div');pb.className='progress';document.body.append(pb);
 addEventListener('scroll',()=>{pb.style.width=(scrollY/(document.body.scrollHeight-innerHeight)*100)+'%'},{passive:true});
-// hero: globe of hearts (lit, curved, draggable, swells under the pointer)
+// hero: a 3D heart built from tiny hearts (drag to spin, tilts with the pointer)
 (()=>{const c=document.getElementById('fx');if(!c)return;const x=c.getContext('2d'),RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
-const HP=new Path2D('M22 30C20 20 4 18 4 8 4-1 17-2 22 8 27-2 40-1 40 8c0 10-16 12-18 22z'),L=[-.45,-.55,.7],N=420,pts=[];
-for(let i=0;i<N;i++){const y=1-2*(i+.5)/N,r=Math.sqrt(1-y*y),t=i*2.399963;pts.push([Math.cos(t)*r,y,Math.sin(t)*r])}
-let w,h,ry=0,vy=.004,drag=false,px=0,mx=-999,my=-999,on=true;const rx=-.3;
+const HP=new Path2D('M22 30C20 20 4 18 4 8 4-1 17-2 22 8 27-2 40-1 40 8c0 10-16 12-18 22z');
+const F=(X,Y,Z)=>{const a=X*X+2.25*Y*Y+Z*Z-1;return a*a*a-X*X*Z*Z*Z-.1125*Y*Y*Z*Z*Z};
+const D=[];{let g=0;while(D.length<1900&&g++<200000){const X=(Math.random()*2-1)*1.25,Z=(Math.random()*2-1)*1.25;let lo=0,hi=1.2;if(F(X,lo,Z)*F(X,hi,Z)>=0)continue;for(let i=0;i<30;i++){const m=(lo+hi)/2;F(X,lo,Z)*F(X,m,Z)<=0?hi=m:lo=m}D.push([X*1.05,-Z*1.05+.1,(lo+hi)/2*(Math.random()<.5?1:-1)*1.05])}}
+let w,h,ry=0,vy=.004,drag=false,px=0,ty=0,on=true;
 function size(){const d=devicePixelRatio||1;w=c.clientWidth;h=c.clientHeight;c.width=w*d;c.height=h*d;x.setTransform(d,0,0,d,0,0)}size();addEventListener('resize',size);
 c.addEventListener('pointerdown',e=>{drag=true;px=e.clientX;c.setPointerCapture(e.pointerId);c.style.cursor='grabbing'});
 c.addEventListener('pointerup',()=>{drag=false;c.style.cursor='grab'});
-c.addEventListener('pointermove',e=>{const b=c.getBoundingClientRect();mx=e.clientX-b.left;my=e.clientY-b.top;if(drag){vy=(e.clientX-px)*.0025;ry+=(e.clientX-px)*.008;px=e.clientX}});
-c.addEventListener('pointerleave',()=>{mx=my=-999});
+c.addEventListener('pointermove',e=>{const b=c.getBoundingClientRect();ty=((e.clientY-b.top)/b.height-.5);if(drag){vy=(e.clientX-px)*.0025;ry+=(e.clientX-px)*.008;px=e.clientX}});
+c.addEventListener('pointerleave',()=>{ty=0});
 new IntersectionObserver(e=>on=e[0].isIntersecting).observe(c);
-function draw(){x.clearRect(0,0,w,h);const R=Math.min(w*.5,h)*.54,cx=w/2,cy=h/2,cY=Math.cos(ry),sY=Math.sin(ry),cX=Math.cos(rx),sX=Math.sin(rx);
- const q=pts.map(p=>{const X=p[0]*cY+p[2]*sY;let Z=-p[0]*sY+p[2]*cY;const Y=p[1]*cX-Z*sX;Z=p[1]*sX+Z*cX;return[X,Y,Z]}).sort((a,b)=>a[2]-b[2]);
- for(const p of q){const z=p[2];if(z<-.15)continue;const d=(z+1)/2,lit=Math.max(0,p[0]*L[0]+p[1]*L[1]+z*L[2]),X=cx+p[0]*R,Y=cy+p[1]*R;
-  let k=.17+d*.26;const dd=Math.hypot(X-mx,Y-my);if(dd<110)k*=1+(1-dd/110)*1.1;
-  const a=Math.atan2(p[1],p[0]),sq=Math.max(.25,z<0?.25:.3+.7*z),v=Math.round(70+lit*185*(.5+d*.5));
-  x.save();x.translate(X,Y);x.rotate(a);x.scale(sq,1);x.rotate(-a);x.scale(k,k);x.translate(-22,-15);x.globalAlpha=z<0?.12:.2+d*.8;x.fillStyle=`rgb(${v},${v-3},${v-9})`;x.fill(HP);x.restore()}}
+function draw(){x.clearRect(0,0,w,h);const sc=Math.min(w*.5,h)*.34,cx=w/2,cy=h/2,t=performance.now()/1000,a=ry+Math.sin(t*.4)*.15,b=ty*.4,cY=Math.cos(a),sY=Math.sin(a),cX=Math.cos(b),sX=Math.sin(b);
+ const q=D.map(p=>{const X=p[0]*cY+p[2]*sY;let Z=-p[0]*sY+p[2]*cY;const Y=p[1]*cX-Z*sX;Z=p[1]*sX+Z*cX;return[X,Y,Z]}).sort((m,n)=>m[2]-n[2]);
+ for(const p of q){const d=(p[2]+1.2)/2.4,k=.045+d*.115;x.save();x.translate(cx+p[0]*sc,cy+p[1]*sc);x.scale(k,k);x.translate(-22,-15);x.globalAlpha=.12+d*d*.88;const v=Math.round(110+d*145);x.fillStyle=`rgb(${v},${v-3},${v-9})`;x.fill(HP);x.restore()}}
 if(RM){draw()}else(function loop(){if(on){draw();if(!drag){vy+=(.004-vy)*.02;ry+=vy}}requestAnimationFrame(loop)})();})();
 // ---- shop ----
 const CAPSVG='<svg viewBox="0 0 200 160"><path d="M30 100c0-50 30-70 70-70s70 20 70 70c-30-8-110-8-140 0z" fill="#0e0e0e" stroke="#555"/><path d="M30 100c-14 6-20 14-4 20 40-10 108-10 148 0 16-6 10-14-4-20z" fill="#0e0e0e" stroke="#555"/><path transform="translate(92.0,48.0) scale(0.40)" d="M22 30C20 20 4 18 4 8 4-1 17-2 22 8 27-2 40-1 40 8c0 10-16 12-18 22z" fill="none" stroke="#e9e4da" stroke-width="3"/><path transform="translate(92.0,63.2) scale(0.40)" d="M22 30C20 20 4 18 4 8 4-1 17-2 22 8 27-2 40-1 40 8c0 10-16 12-18 22z" fill="none" stroke="#e9e4da" stroke-width="3"/><path transform="translate(92.0,78.4) scale(0.40)" d="M22 30C20 20 4 18 4 8 4-1 17-2 22 8 27-2 40-1 40 8c0 10-16 12-18 22z" fill="none" stroke="#e9e4da" stroke-width="3"/></svg>';
