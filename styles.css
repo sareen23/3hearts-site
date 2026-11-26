@@ -234,3 +234,11 @@ nav{margin-left:auto}.cartbtn{order:3;margin:0 0 0 1.5rem}.menu{order:4;margin-l
 }
 .hero{align-items:stretch;justify-items:stretch}
 .hero-foot{width:100%}
+/* no faces: crop to torso/garment */
+.film img{aspect-ratio:1/1;object-fit:cover;object-position:50% 96%}
+.tile img{object-position:50% 100%!important;transform:scale(1.55);transform-origin:50% 100%}
+.tile:hover img{transform:scale(1.62)}
+.tile .capimg{transform:none!important}
+.card:hover .art img.ph1{transform:scale(calc(var(--z) + .05))}
+@media(max-width:700px){.film img{aspect-ratio:1/1}}
+.tile img.t2{transform:scale(1.2)}.tile:hover img.t2{transform:scale(1.27)}

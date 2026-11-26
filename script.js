@@ -38,7 +38,7 @@ if(RM){draw()}else(function loop(){if(on){draw();if(!drag){vy+=(.004-vy)*.02;ry+
 // ---- shop ----
 const CAPSVG='<svg viewBox="0 0 200 160"><path d="M30 100c0-50 30-70 70-70s70 20 70 70c-30-8-110-8-140 0z" fill="#0e0e0e" stroke="#555"/><path d="M30 100c-14 6-20 14-4 20 40-10 108-10 148 0 16-6 10-14-4-20z" fill="#0e0e0e" stroke="#555"/><path transform="translate(92.0,48.0) scale(0.40)" d="M22 30C20 20 4 18 4 8 4-1 17-2 22 8 27-2 40-1 40 8c0 10-16 12-18 22z" fill="none" stroke="#e9e4da" stroke-width="3"/><path transform="translate(92.0,63.2) scale(0.40)" d="M22 30C20 20 4 18 4 8 4-1 17-2 22 8 27-2 40-1 40 8c0 10-16 12-18 22z" fill="none" stroke="#e9e4da" stroke-width="3"/><path transform="translate(92.0,78.4) scale(0.40)" d="M22 30C20 20 4 18 4 8 4-1 17-2 22 8 27-2 40-1 40 8c0 10-16 12-18 22z" fill="none" stroke="#e9e4da" stroke-width="3"/></svg>';
 (()=>{const S=window.SHOP,$=s=>document.querySelector(s),m=n=>S.currency+n;
-const art=p=>p.img?`<img class="ph1" style="--o:${p.o||'50% 88%'};--z:${p.z||1.4}" src="img/${p.img}.jpg" alt="${p.name}" loading="lazy">`+(p.alt?`<img class="alt" src="img/${p.alt}.jpg" alt="" loading="lazy">`:''):'<div class="ph" style="display:grid;place-items:center;height:100%">'+CAPSVG+'</div>';
+const art=p=>p.img?`<img class="ph1" style="--o:${p.o||'50% 100%'};--z:${p.z||1.6}" src="img/${p.img}.jpg" alt="${p.name}" loading="lazy">`+(p.alt?`<img class="alt" src="img/${p.alt}.jpg" alt="" loading="lazy">`:''):'<div class="ph" style="display:grid;place-items:center;height:100%">'+CAPSVG+'</div>';
 let cart=[];try{cart=JSON.parse(localStorage.getItem('3hc')||'[]')}catch{}
 const save=()=>{try{localStorage.setItem('3hc',JSON.stringify(cart))}catch{}};
 let cat='All';const cats=['All',...new Set(S.products.map(p=>p.cat))];
